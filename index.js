@@ -1,26 +1,56 @@
 var plist = require('plist'),
 _ = require('underscore'),
-glob = require('glob');
+glob = require('glob'),
+path = require('path'),
+fs = require('fs'),
+async = require('async'),
+request = require('request');
 
 _.templateSettings = { interpolate: /\{\{(.+?)\}\}/g };
-var workflowTemplate = _.template('[{{name}}]({{webaddress}})');
-var workflowAuthorTemplate = _.template('[{{name}} by {{createdby}}]({{webaddress}})');
+var workflowTemplate = _.template('[{{name}} by {{author}}]({{url}})');
+var targetFolder = process.argv[2];
 
-var workflowMarkdown = function(workflowPlist) {
-  if (workflowPlist.createdby) {
-    return workflowAuthorTemplate(workflowPlist);
+var getPlistData = function(file) {
+  var plistFile = path.join(file, 'info.plist');
+  if (!fs.existsSync(file)) { return {}; }
+  var parsed = plist.parseFileSync(plistFile);
+  var url = _.isEmpty(parsed.webaddress) ? undefined : parsed.webaddress  ;
+  return {
+    name: parsed.name,
+    author: parsed.createdby,
+    url: url
+  };
+};
+
+var getUpdateData = function(file) {
+  var updateFile = path.join(file, 'update.json');
+  if (!fs.existsSync(updateFile)) { return {}; }
+  var parsed = JSON.parse(fs.readFileSync(updateFile));
+  return { remoteJSON: parsed.remote_json };
+};
+
+var parseFile = function(file, callback) {
+  var plistData = getPlistData(file);
+  var updateData = getUpdateData(file);
+  if (updateData.remoteJSON) {
+    request(updateData.remoteJSON, function(error, response, body) {
+      if (!error && response.statusCode === 200) {
+        json = JSON.parse(body);
+        return callback(null, _.defaults(plistData, {url: json.download_url}));
+      } else {
+        return callback(null, plistData);
+      }
+    });
   } else {
-    return workflowTemplate(workflowPlist);
+    return callback(null, plistData);
   }
 };
 
-var targetFolder = process.argv[2];
+var folders = glob.sync(path.join(targetFolder, '/*/'));
 
-glob(targetFolder+'/*/info.plist', function(error, files) {
-  var markdown = files.map(function(file) {
-    var parsed = plist.parseFileSync(file);
-    return workflowMarkdown(parsed);
+async.map(folders, parseFile, function(err, results) {
+  results = _.sortBy(results, function(data) {
+    return data.name.toLowerCase();
   });
-  markdown = _.sortBy(markdown, function(md) { return md.toLowerCase(); });
-  console.log(markdown.join("\n"));
+  console.log(_.map(results, workflowTemplate).join("\n"));
 });

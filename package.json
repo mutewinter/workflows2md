@@ -2,16 +2,18 @@
   "name": "workflows2md",
   "description": "Make a list of your Alfred Workflows in Markdown.",
   "author": {
-    "name" : "Jeremy Mack",
-    "email" : "@mutewinter",
-    "url" : "http://twitter.com/mutewinter"
+    "name": "Jeremy Mack",
+    "email": "@mutewinter",
+    "url": "http://twitter.com/mutewinter"
   },
   "version": "1.0.0",
   "main": "index.js",
   "dependencies": {
     "plist": "~0.4.3",
     "underscore": "~1.5.2",
-    "glob": "~3.2.6"
+    "glob": "~3.2.6",
+    "async": "~0.2.9",
+    "request": "~2.27.0"
   },
   "devDependencies": {},
   "scripts": {
