@@ -49,6 +49,12 @@ var parseFile = function(file, callback) {
 var folders = glob.sync(path.join(targetFolder, '/*/'));
 
 async.map(folders, parseFile, function(err, results) {
+  results = results.map(function(result) {
+    if (result.url && !/^http/.test(result.url)) {
+      result.url = 'http://' + result.url;
+    }
+    return result;
+  });
   results = _.sortBy(results, function(data) {
     return data.name.toLowerCase();
   });
