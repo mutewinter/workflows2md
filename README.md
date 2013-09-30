@@ -1,6 +1,7 @@
 # Workflows2MD
 
-Make a list of your Alfred Workflows in Markdown.
+Make a list of your Alfred Workflows in Markdown. Parses `info.plist` and
+`update.json`.
 
 ```
 $ npm install
