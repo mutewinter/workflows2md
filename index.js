@@ -7,7 +7,7 @@ async = require('async'),
 request = require('request');
 
 _.templateSettings = { interpolate: /\{\{(.+?)\}\}/g };
-var workflowTemplate = _.template('[{{name}} by {{author}}]({{url}})');
+var workflowTemplate = _.template('* [{{name}}]({{url}}) by {{author}}');
 var targetFolder = process.argv[2];
 
 var getPlistData = function(file) {
