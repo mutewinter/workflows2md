@@ -62,5 +62,8 @@ async.map(folders, parseFile, function(err, results) {
   results = _.sortBy(results, function(data) {
     return data.name.toLowerCase();
   });
+  console.log('_Generated with '+
+              '[workflows2md](https://github.com/mutewinter/workflows2md)._');
+  console.log('');
   console.log(_.map(results, workflowTemplate).join("\n"));
 });
