@@ -35,8 +35,12 @@ var parseFile = function(file, callback) {
   if (updateData.remoteJSON) {
     request(updateData.remoteJSON, function(error, response, body) {
       if (!error && response.statusCode === 200) {
-        json = JSON.parse(body);
-        return callback(null, _.defaults(plistData, {url: json.download_url}));
+        try {
+          json = JSON.parse(body);
+          return callback(null, _.defaults(plistData, {url: json.download_url}));
+        } catch (e) {
+          return callback(null, plistData);
+        }
       } else {
         return callback(null, plistData);
       }
