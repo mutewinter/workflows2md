@@ -7,6 +7,6 @@ Make a list of your Alfred Workflows in Markdown. Parses `info.plist` and
 $ npm install
 $ node index.js ~/Dropbox/Preferences/Alfred.alfredpreferences/workflows
 
-[Workflow Name by Author](http://sweetworkflowsitebro.com)
-[Workflow2 Name by Author](http://sweetworkflowsitebro.com)
+* [Workflow Name](http://sweetworkflowsitebro.com) by Author
+* [Workflow2 Name](http://sweetworkflowsitebro.com) by Author
 ```
